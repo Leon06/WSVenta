@@ -3,13 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using WSVenta.Models;
 using WSVenta.Models.Response;
 using WSVenta.Models.Request;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WSVenta.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ClienteController : ControllerBase
+
     {
+
         [HttpGet]
         //OBTENER DATOS
         public IActionResult Get()
@@ -18,13 +22,12 @@ namespace WSVenta.Controllers
             //oRespuesta.Exito = 0;
             try
             {
-                
-                using (SistemaVentaContext db=new SistemaVentaContext()) 
+                using (SistemaVentaContext db = new SistemaVentaContext())
                 {
-                    var lst = db.Clientes.ToList();
+                    var lst = db.Clientes.OrderByDescending(d => d.Id).ToList();
                     oRespuesta.Exito = 1;
                     oRespuesta.Data = lst;
-                            
+
                 }
             }
             catch (Exception ex)
@@ -42,10 +45,10 @@ namespace WSVenta.Controllers
             Respuesta oRespuesta = new Respuesta();
 
             ClienteRequest oClienteRequest = new ClienteRequest();
-            try 
+            try
             {
-                
-                using (SistemaVentaContext db=new SistemaVentaContext())
+
+                using (SistemaVentaContext db = new SistemaVentaContext())
                 {
                     Cliente oCliente = new Cliente();
                     oCliente.Nombre = oModel.Nombre;
@@ -55,7 +58,7 @@ namespace WSVenta.Controllers
 
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 oRespuesta.Mensaje = ex.Message;
             }
@@ -64,6 +67,7 @@ namespace WSVenta.Controllers
         }
 
         [HttpPut]
+        //EDITAR DATOS
         public IActionResult Edit(ClienteRequest oModel)
         {
             Respuesta oRespuesta = new Respuesta();
@@ -118,5 +122,6 @@ namespace WSVenta.Controllers
 
 
     }
-    
+
+
 }

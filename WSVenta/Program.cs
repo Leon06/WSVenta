@@ -4,6 +4,7 @@ using WSVenta.Models.Common;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using WSVenta.tools;
 
 var  Micors = "MiCors";
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,7 @@ builder.Services.AddCors(options =>
 
 // Inyeccion de dependencias important!!!
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IVentaService, VentaService>();
 ///
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingsSection);
@@ -53,7 +55,13 @@ builder.Services.AddAuthentication(d =>
 
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+     {
+         options.JsonSerializerOptions.Converters.Add(new IntToStringConverter());
+         options.JsonSerializerOptions.Converters.Add(new DecimalToStringConverter());
+     });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
